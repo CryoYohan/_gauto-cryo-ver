@@ -32,10 +32,11 @@ jobs:
 
             ---
 
-          ## Commits
-          Commits: 0  
-          Last updated: Never
-          EOT
+            ## Commits
+            Commits: 0  
+            Last updated: Never
+            EOT
+
           fi
 
           # Get current values
