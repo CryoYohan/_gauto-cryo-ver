@@ -2,11 +2,8 @@ name: _gAuto-CryoVer inspired by Master Jayharron Abejar
 
 on:
   schedule:
-    - cron: "0 * * * *"  # Every hour
-  workflow_dispatch:
-
-permissions:
-  contents: write  # allow pushing commits
+    - cron: "* * * * *"  # Every minute (for testing)
+  workflow_dispatch:      # Allow manual trigger
 
 jobs:
   update-readme:
@@ -16,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Update README commit count and timestamp
+      - name: Create or update README
         run: |
           FILE="README.md"
 
@@ -31,15 +28,15 @@ jobs:
             echo "---" >> "$FILE"
             echo "" >> "$FILE"
             echo "## Commits" >> "$FILE"
-            echo "commit number: 0" >> "$FILE"
+            echo "Commits: 0" >> "$FILE"
             echo "Last updated: Never" >> "$FILE"
           fi
 
-          CURRENT=$(grep -oP '(?<=commit number: )\d+' "$FILE" || echo "0")
+          CURRENT=$(grep -oP '(?<=Commits: )\d+' "$FILE" || echo "0")
           NEXT=$((CURRENT + 1))
           NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
-          sed -i "s/commit number: $CURRENT/commit number: $NEXT/" "$FILE"
+          sed -i "s/Commits: $CURRENT/Commits: $NEXT/" "$FILE"
 
           if grep -q "Last updated:" "$FILE"; then
             sed -i "s|Last updated: .*|Last updated: $NOW|" "$FILE"
