@@ -1,0 +1,32 @@
+name: _gAuto-CryoVer inspired by Master Jayharron Abejar
+
+on:
+  schedule:
+    - cron: "* * * * *"  # Every minute
+  workflow_dispatch:      # Allow manual trigger
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Increment commit counter in README
+      run: |
+        FILE="README.md"
+        if [ ! -f "$FILE" ]; then
+          echo "Commits: 0" > $FILE
+        fi
+        CURRENT=$(grep -oP '(?<=Commits: )\d+' "$FILE" || echo "0")
+        NEXT=$((CURRENT + 1))
+        sed -i "s/Commits: $CURRENT/Commits: $NEXT/" "$FILE"
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add README.md
+        git commit -m "Automated commit #$NEXT" || echo "No changes to commit"
+        git push
