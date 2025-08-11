@@ -23,40 +23,41 @@ jobs:
           # If README doesn't exist, create it with base content
           if [ ! -f "$FILE" ]; then
             cat <<EOT > $FILE
-# GitHub Auto Commit Project
+            # GitHub Auto Commit Project
 
-This repository demonstrates an **hourly automated commit** using GitHub Actions.  
-It automatically updates this README to keep track of how many commits have been made by the bot.  
+            This repository demonstrates an **hourly automated commit** using GitHub Actions.  
+            It automatically updates this README to keep track of how many commits have been made by the bot.  
 
-💡 **Inspired by:** Master Jayharron Abejar — I am truly grateful for his guidance and inspiration.  
+            💡 **Inspired by:** Master Jayharron Abejar — I am truly grateful for his guidance and inspiration.  
 
----
+            ---
 
-## Commits
-Commits: 0  
-Last updated: Never
-EOT
-          fi
+          ## Commits
+          Commits: 0  
+          Last updated: Never
+          EOT
+                    fi
 
-          # Get current values
-          CURRENT=$(grep -oP '(?<=Commits: )\d+' "$FILE" || echo "0")
-          NEXT=$((CURRENT + 1))
-          NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+                    # Get current values
+                    CURRENT=$(grep -oP '(?<=Commits: )\d+' "$FILE" || echo "0")
+                    NEXT=$((CURRENT + 1))
+                    NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
-          # Update commit count
-          sed -i "s/Commits: $CURRENT/Commits: $NEXT/" "$FILE"
+                    # Update commit count
+                    sed -i "s/Commits: $CURRENT/Commits: $NEXT/" "$FILE"
 
-          # Update timestamp
-          if grep -q "Last updated:" "$FILE"; then
-            sed -i "s|Last updated: .*|Last updated: $NOW|" "$FILE"
-          else
-            echo "Last updated: $NOW" >> "$FILE"
-          fi
+                    # Update timestamp
+                    if grep -q "Last updated:" "$FILE"; then
+                      sed -i "s|Last updated: .*|Last updated: $NOW|" "$FILE"
+                    else
+                      echo "Last updated: $NOW" >> "$FILE"
+                    fi
 
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add README.md
-          git commit -m "Automated commit #$NEXT" || echo "No changes to commit"
-          git push
+                - name: Commit and push changes
+                  run: |
+                    git config --global user.name "github-actions[bot]"
+                    git config --global user.email "github-actions[bot]@users.noreply.github.com"
+                    git add README.md
+                    git commit -m "Automated commit #$NEXT" || echo "No changes to commit"
+                    git push
+            
