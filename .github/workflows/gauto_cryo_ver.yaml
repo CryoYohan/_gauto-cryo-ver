@@ -3,10 +3,10 @@ name: _gAuto-CryoVer inspired by Master Jayharron Abejar
 on:
   schedule:
     - cron: "0 * * * *"  # Every hour
-  workflow_dispatch:
+  workflow_dispatch:      # Allow manual trigger
 
 permissions:
-  contents: write  # allow pushing commits
+  contents: write
 
 jobs:
   update-readme:
@@ -16,42 +16,15 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Update README commit count and timestamp
+    - name: Increment commit counter in README
       run: |
         FILE="README.md"
-        
-        # If README doesn't exist, create it with base content
         if [ ! -f "$FILE" ]; then
-          cat <<EOT > $FILE
-# GitHub Auto Commit Project
-
-This repository demonstrates an **hourly automated commit** using GitHub Actions.  
-It automatically updates this README to keep track of how many commits have been made by the bot.  
-
-💡 **Inspired by:** Master Jayharron Abejar — I am truly grateful for his guidance and inspiration.  
-
----
-
-## Commits
-Commits: 0  
-Last updated: Never
-EOT
+          echo "Commits: 0" > $FILE
         fi
-
-        # Get current values
         CURRENT=$(grep -oP '(?<=Commits: )\d+' "$FILE" || echo "0")
         NEXT=$((CURRENT + 1))
-        NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-
-        # Update commit count
         sed -i "s/Commits: $CURRENT/Commits: $NEXT/" "$FILE"
-
-        # Update timestamp
-        if grep -q "Last updated:" "$FILE"; then
-          sed -i "s|Last updated: .*|Last updated: $NOW|" "$FILE"
-        else
-          echo "Last updated: $NOW" >> "$FILE"
-        fi
 
     - name: Commit and push changes
       run: |
