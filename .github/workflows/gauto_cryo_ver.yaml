@@ -20,34 +20,27 @@ jobs:
         run: |
           FILE="README.md"
 
-          # If README doesn't exist, create it with base content
           if [ ! -f "$FILE" ]; then
-            cat <<EOT > $FILE
-            # GitHub Auto Commit Project
-
-            This repository demonstrates an **hourly automated commit** using GitHub Actions.  
-            It automatically updates this README to keep track of how many commits have been made by the bot.  
-
-            💡 **Inspired by:** Master Jayharron Abejar — I am truly grateful for his guidance and inspiration.  
-
-            ---
-
-            ## Commits
-            Commits: 0  
-            Last updated: Never
-            EOT
-
+            echo "# GitHub Auto Commit Project" > "$FILE"
+            echo "" >> "$FILE"
+            echo "This repository demonstrates an **hourly automated commit** using GitHub Actions." >> "$FILE"
+            echo "It automatically updates this README to keep track of how many commits have been made by the bot." >> "$FILE"
+            echo "" >> "$FILE"
+            echo "💡 **Inspired by:** Master Jayharron Abejar — I am truly grateful for his guidance and inspiration." >> "$FILE"
+            echo "" >> "$FILE"
+            echo "---" >> "$FILE"
+            echo "" >> "$FILE"
+            echo "## Commits" >> "$FILE"
+            echo "commit number: 0" >> "$FILE"
+            echo "Last updated: Never" >> "$FILE"
           fi
 
-          # Get current values
-          CURRENT=$(grep -oP '(?<=Commits: )\d+' "$FILE" || echo "0")
+          CURRENT=$(grep -oP '(?<=commit number: )\d+' "$FILE" || echo "0")
           NEXT=$((CURRENT + 1))
           NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
-          # Update commit count
-          sed -i "s/Commits: $CURRENT/Commits: $NEXT/" "$FILE"
+          sed -i "s/commit number: $CURRENT/commit number: $NEXT/" "$FILE"
 
-          # Update timestamp
           if grep -q "Last updated:" "$FILE"; then
             sed -i "s|Last updated: .*|Last updated: $NOW|" "$FILE"
           else
@@ -61,4 +54,3 @@ jobs:
           git add README.md
           git commit -m "Automated commit #$NEXT" || echo "No changes to commit"
           git push
-            
