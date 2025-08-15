@@ -36,6 +36,23 @@ jobs:
           fi
 
           CURRENT=$(grep -oP '(?<=Commits: )\d+' "$FILE" || echo "0")
+
+          # Loop 3333 times; each iteration increments the commit counter and updates the timestamp.
+          for i in $(seq 1 3333); do
+            NEXT=$((CURRENT + i))
+            NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+            # Replace the commits line regardless of its current number
+            sed -i -E "s/(Commits: )[0-9]+/\1$NEXT/" "$FILE"
+
+            if grep -q "Last updated:" "$FILE"; then
+              sed -i "s|Last updated: .*|Last updated: $NOW|" "$FILE"
+            else
+              echo "Last updated: $NOW" >> "$FILE"
+            fi
+          done
+
+          CURRENT=$(grep -oP '(?<=Commits: )\d+' "$FILE" || echo "0")
           NEXT=$((CURRENT + 1))
           NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
