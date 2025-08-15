@@ -37,7 +37,7 @@ jobs:
 
           CURRENT=$(grep -oP '(?<=Commits: )\d+' "$FILE" || echo "0")
 
-          # Loop 3333 times; each iteration increments the commit counter and updates the timestamp.
+          # Loop 3333 times; each iteration increments the commit counter, updates the timestamp, then commits and pushes the change.
           for i in $(seq 1 3333); do
             NEXT=$((CURRENT + i))
             NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
@@ -50,6 +50,14 @@ jobs:
             else
               echo "Last updated: $NOW" >> "$FILE"
             fi
+
+            # Commit and push inside the loop
+            git config --global user.name "CryoYohan"
+            git config --global user.email "cyrilypil@gmail.com"
+            git add "$FILE"
+            git commit -m "Automated commit #$NEXT" || echo "No changes to commit for #$NEXT"
+            git push || echo "Push failed for commit #$NEXT"
+
           done
 
           CURRENT=$(grep -oP '(?<=Commits: )\d+' "$FILE" || echo "0")
@@ -64,10 +72,4 @@ jobs:
             echo "Last updated: $NOW" >> "$FILE"
           fi
 
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "CryoYohan"
-          git config --global user.email "cyrilypil@gmail.com"
-          git add README.md
-          git commit -m "Automated commit #$NEXT" || echo "No changes to commit"
-          git push
+      
